@@ -1,0 +1,18 @@
+enum Role {
+  LEARNER
+  MENTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Status {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
