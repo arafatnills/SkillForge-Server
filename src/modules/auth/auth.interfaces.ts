@@ -8,3 +8,7 @@ export interface LoginUserInterface {
 	email: string;
 	password: string;
 }
+
+export interface GoogleAuthInterface {
+	idToken: string;
+}

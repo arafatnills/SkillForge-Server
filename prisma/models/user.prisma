@@ -5,6 +5,7 @@ model User {
   password      String?
   profilePhoto  String?
   googleId      String?      @unique
+  provider      AuthProvider @default(CREDENTIAL)
   emailVerified Boolean      @default(false)
   role          Role         @default(LEARNER)
   status        Status       @default(ACTIVE)

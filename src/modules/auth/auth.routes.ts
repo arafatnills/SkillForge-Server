@@ -15,5 +15,10 @@ router.post(
 	validateRequest(UserValidation.loginUserZodSchema),
 	AuthControllers.loginUser,
 );
+router.post(
+	"/google",
+	validateRequest(UserValidation.googleLoginZodSchema),
+	AuthControllers.googleLogin,
+);
 
 export const AuthRoutes = router;
