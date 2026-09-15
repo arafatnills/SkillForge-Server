@@ -5,14 +5,21 @@ import type { SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "../../utils/jwt";
 import type {
   CreateUserInterface,
+  ForgotPasswordInterface,
   GoogleAuthInterface,
   LoginUserInterface,
+  ResetPasswordInterface,
 } from "./auth.interfaces";
 import { AppError } from "../../utils/AppError";
 import status from "http-status";
 import { AuthProvider, Role } from "../../generated/prisma/enums";
 import type { TokenPayload } from "google-auth-library";
 import { googleClient } from "../../lib/google";
+import crypto from "crypto";
+import { redisClient } from "../../lib/redis";
+import { transporter } from "../../lib/nodemailer";
+import ejs from "ejs";
+import path from "path";
 
 // create user
 const createUserQuery = async (payload: CreateUserInterface) => {
@@ -191,17 +198,6 @@ const googleLoginQuery = async (payload: GoogleAuthInterface) => {
         },
       },
     });
-  } else {
-    user = await prisma.user.update({
-      where: {
-        email: googleIdTokenPayload.email,
-      },
-      data: {
-        googleId: googleIdTokenPayload.sub,
-        provider: AuthProvider.GOOGLE,
-        profilePhoto: user.profilePhoto || googleIdTokenPayload.picture,
-      },
-    });
   }
 
   const jwtPayload = {
@@ -228,8 +224,127 @@ const googleLoginQuery = async (payload: GoogleAuthInterface) => {
   };
 };
 
+// forgot password
+const forgotPasswordQuery = async (payload: ForgotPasswordInterface) => {
+  const { email } = payload;
+
+  const isExistsUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!isExistsUser) throw new AppError(status.NOT_FOUND, "user not found!");
+
+  if (isExistsUser.status === "BLOCKED")
+    throw new AppError(status.CONFLICT, "user is blocked!");
+
+  if (isExistsUser.status === "DELETED" || isExistsUser.isDeleted)
+    throw new AppError(status.NOT_FOUND, "user is deleted!");
+
+  if (isExistsUser.googleId && isExistsUser.provider === "GOOGLE")
+    throw new AppError(status.CONFLICT, "user has account with google.");
+  if (!isExistsUser.emailVerified)
+    throw new AppError(status.CONFLICT, "email not verified!");
+
+  const otp = crypto.randomInt(100000, 1000000).toString();
+  const key = `forgot-password:${isExistsUser.email}`;
+
+  await redisClient.set(key, otp, {
+    expiration: {
+      type: "EX",
+      value: 5 * 60,
+    },
+  });
+
+  const templatePath = path.join(
+    process.cwd(),
+    "/src/templates/forgot-password.ejs",
+  );
+
+  const html = await ejs.renderFile(templatePath, {
+    otp,
+    name: isExistsUser.name,
+  });
+
+  // sent otp via email
+  await transporter.sendMail({
+    from: config.smtp_sender,
+    to: isExistsUser.email,
+    subject: "Forgot Password OTP",
+    html,
+  });
+};
+
+// reset password
+const resetPasswordQuery = async (payload: ResetPasswordInterface) => {
+  const { email, otp, newPassword } = payload;
+
+  const isExistsUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!isExistsUser) throw new AppError(status.NOT_FOUND, "user not found!");
+
+  if (isExistsUser.status === "BLOCKED")
+    throw new AppError(status.CONFLICT, "user is blocked!");
+
+  if (isExistsUser.status === "DELETED" || isExistsUser.isDeleted)
+    throw new AppError(status.NOT_FOUND, "user is deleted!");
+
+  if (isExistsUser.googleId && isExistsUser.provider === "GOOGLE")
+    throw new AppError(status.CONFLICT, "user has account with google.");
+  if (!isExistsUser.emailVerified)
+    throw new AppError(status.CONFLICT, "email not verified!");
+
+  const key = `forgot-password:${isExistsUser.email}`;
+
+  const redisOtp = await redisClient.get(key);
+
+  if (!redisOtp) throw new AppError(status.UNAUTHORIZED, "Invalid OPT");
+  if (redisOtp !== otp)
+    throw new AppError(status.UNAUTHORIZED, "OTP does not match!.");
+
+  const hashPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  await prisma.user.update({
+    where: {
+      email: isExistsUser.email,
+    },
+    data: {
+      password: hashPassword,
+    },
+  });
+
+  await redisClient.del([key]);
+
+    const templatePath = path.join(
+    process.cwd(),
+    "/src/templates/reset-success.ejs",
+  );
+
+  const html = await ejs.renderFile(templatePath, {
+    name: isExistsUser.name,
+  });
+
+  // sent otp via email
+  await transporter.sendMail({
+    from: config.smtp_sender,
+    to: isExistsUser.email,
+    subject: "Password changed",
+    html,
+  });
+};
+
 export const AuthServices = {
   createUserQuery,
   loginUserQuery,
-  googleLoginQuery
+  googleLoginQuery,
+  forgotPasswordQuery,
+  resetPasswordQuery,
 };

@@ -32,4 +32,9 @@ export default {
   redis_password: env.REDIS_PASSWORD!,
   redis_host: env.REDIS_HOST!,
   redis_port: env.REDIS_PORT!,
+
+
+  smtp_password: env.SMTP_PASSWORD!,
+  smtp_user: env.SMTP_USER!,
+  smtp_sender: env.SMTP_SENDER!,
 };

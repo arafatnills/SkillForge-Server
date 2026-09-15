@@ -109,5 +109,41 @@ const googleLogin = catchAsync(
     });
   },
 );
+// Forgot Password
+const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = req.body;
+    console.log(payload)
+    await AuthServices.forgotPasswordQuery(payload);
 
-export const AuthControllers = { createUser, loginUser, googleLogin };
+    sendResponse(res, {
+      success: true,
+      status: status.OK,
+      message: `OPT sent to email ${payload.email}`,
+      data: null,
+    });
+  },
+);
+
+// Reset Password
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = req.body;
+    await AuthServices.resetPasswordQuery(payload);
+
+    sendResponse(res, {
+      success: true,
+      status: status.OK,
+      message: "password was changed successfully!",
+      data: null
+    });
+  },
+);
+
+export const AuthControllers = {
+  createUser,
+  loginUser,
+  googleLogin,
+  forgotPassword,
+  resetPassword,
+};

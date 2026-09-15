@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Reset Successful</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #10b981; /* Success Green color */
+        padding: 30px;
+        text-align: center;
+        color: #ffffff;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+      .body-content {
+        padding: 40px 30px;
+        color: #333333;
+        line-height: 1.6;
+      }
+      .body-content h2 {
+        font-size: 20px;
+        color: #1f2937;
+        margin-top: 0;
+      }
+      .body-content p {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 20px;
+      }
+      .success-icon {
+        text-align: center;
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+
+      .security-notice {
+        background-color: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 15px;
+        margin-top: 30px;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #991b1b;
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #9ca3af;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        margin: 5px 0;
+      }
+      .success-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #7ac142;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+
+      .checkmark {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #7ac142;
+        animation:
+          fill 0.4s ease-in-out 0.4s forwards,
+          scale 0.3s ease-in-out 0.9s forwards;
+      }
+
+      .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+
+      @keyframes stroke {
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes scale {
+        0%,
+        100% {
+          transform: none;
+        }
+        50% {
+          transform: scale3d(1.1, 1.1, 1);
+        }
+      }
+      @keyframes fill {
+        100% {
+          box-shadow: inset 0px 0px 0px 30px #7ac142;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Password Changed</h1>
+      </div>
+
+      <!-- Body -->
+      <div class="body-content">
+        <div class="success-icon">
+          <svg
+            class="checkmark"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 52 52"
+          >
+            <circle
+              class="checkmark__circle"
+              cx="26"
+              cy="26"
+              r="25"
+              fill="none"
+            />
+            <path
+              class="checkmark__check"
+              fill="none"
+              d="M14.1 27.2l7.1 7.2 16.7-16.8"
+            />
+          </svg>
+        </div>
+        <h2>Hello <%= locals.name ? name : 'User' %>,</h2>
+
+        <p>
+          Your account password has been successfully reset. You can now use
+          your new password to log in to your account.
+        </p>
+
+        <!-- Security Notice -->
+        <div class="security-notice">
+          <strong>Security Alert:</strong> If you did not make this change or
+          suspect unauthorized access to your account, please contact our
+          support team immediately.
+        </div>
+
+        <p style="margin-top: 30px">
+          Best Regards,<br /><strong>SkillForge</strong>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          &copy; <%= new Date().getFullYear() %> SkillForge. All rights
+          reserved.
+        </p>
+        <p>
+          Need help? Contact our
+          <a
+            href="mailto:support@skillforge.com"
+            style="color: #4f46e5; text-decoration: none"
+            >Support Team</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

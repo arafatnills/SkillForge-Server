@@ -7,6 +7,7 @@ import sendResponse from "./utils/sendResponse";
 import status from "http-status";
 import { redisClient } from "./lib/redis";
 import crypto from 'crypto'
+import { globalErrorHandler } from "./middleware/globalErrorHandeler";
 
 const app = express();
 
@@ -50,5 +51,10 @@ app.get("/redis", async (req: Request, res: Response, next: NextFunction) => {
 
 // all APIs routes
 app.use("/api/v1/auth", AuthRoutes);
+
+
+// global error handler
+
+app.use(globalErrorHandler)
 
 export default app;
