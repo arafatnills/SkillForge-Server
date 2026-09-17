@@ -13,9 +13,23 @@ import catchAsync from "../../utils/catchAsync";
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
+   await AuthServices.createUserQuery(payload);
+    sendResponse(res, {
+      success: true,
+      status: status.CREATED,
+      message: "OTP sent to your email",
+      data: null
+    });
+  },
+);
+
+// create user
+const verifyUserEmail = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = req.body;
 
     const { accessToken, refreshToken, user } =
-      await AuthServices.createUserQuery(payload);
+      await AuthServices.verifyUserEmailQuery(payload);
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -34,7 +48,7 @@ const createUser = catchAsync(
     sendResponse(res, {
       success: true,
       status: status.CREATED,
-      message: "user created successfully!",
+      message: "user verified successfully!",
       data: {
         accessToken,
         refreshToken,
@@ -142,6 +156,7 @@ const resetPassword = catchAsync(
 
 export const AuthControllers = {
   createUser,
+  verifyUserEmail,
   loginUser,
   googleLogin,
   forgotPassword,

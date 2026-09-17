@@ -49,10 +49,16 @@ const resetPasswordZodSchema = z.object({
     .regex(/[^A-Za-z0-9]/, "Password must contain atleast 1 Special Character"),
 });
 
+const verifyUserEmailZodSchema = z.object({
+  email: z.string("Invalid email address"),
+  otp: z.string().length(6),
+});
+
 export const UserValidation = {
   createUserZodSchema,
   loginUserZodSchema,
   googleLoginZodSchema,
   forgotPasswordZodSchema,
   resetPasswordZodSchema,
+  verifyUserEmailZodSchema,
 };

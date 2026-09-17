@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4F46E5; /* Brand Indigo Color */
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .body-content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .body-content h2 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-top: 0;
+        }
+        .body-content p {
+            font-size: 16px;
+            color: #4b5563;
+        }
+        .otp-box {
+            margin: 35px 0;
+        }
+        .otp-code {
+            display: inline-block;
+            font-size: 36px;
+            font-weight: bold;
+            color: #4F46E5;
+            background-color: #EEF2FF;
+            padding: 15px 40px;
+            border-radius: 8px;
+            letter-spacing: 8px;
+            border: 2px dashed #4F46E5;
+        }
+        .warning-text {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 20px;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Welcome to SkillForge!</h1>
+            <p>We are excited to have you on board.</p>
+        </div>
+
+        <!-- Body -->
+        <div class="body-content">
+            <h2>Hello <%= locals.name ? name : 'there' %>,</h2>
+            
+            <p>Thank you for registering. To complete your signup process and verify your email address, please use the following One-Time Password (OTP).</p>
+            
+            <div class="otp-box">
+                <span class="otp-code"><%= locals.otp ? otp : '000000' %></span>
+            </div>
+
+            <p>Enter this code in the verification screen on our website/app.</p>
+
+            <div class="warning-text">
+                <p><strong>Note:</strong> This OTP is valid for <strong>5 minutes</strong>. Do not share this code with anyone.</p>
+                <p>If you did not attempt to create an account, you can safely ignore this email.</p>
+            </div>
+            
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 SkillForge. All rights reserved.</p>
+            <p>Need help? Contact our <a href="mailto:support@skillforge.com" style="color: #4F46E5; text-decoration: none;">Support Team</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

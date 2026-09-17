@@ -22,3 +22,8 @@ export interface ResetPasswordInterface {
   newPassword: string;
   otp: string;
 }
+
+export interface VerifyUserInterface {
+  email: string;
+  otp: string;
+}
