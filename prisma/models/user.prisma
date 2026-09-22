@@ -4,6 +4,7 @@ model User {
   email         String       @unique
   password      String?
   profilePhoto  String?
+  profilePublicId String?
   googleId      String?      @unique
   provider      AuthProvider @default(CREDENTIAL)
   emailVerified Boolean      @default(false)

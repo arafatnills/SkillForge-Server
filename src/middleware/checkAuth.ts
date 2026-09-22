@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import config from "../config";
-import { prisma } from "../lib/prisma";
-import { jwtUtils } from "../utils/jwt";
 import type { Role } from "../generated/prisma/enums";
+import { prisma } from "../lib/prisma";
 import catchAsync from "../utils/catchAsync";
+import { jwtUtils } from "../utils/jwt";
 
 declare global {
 	namespace Express {
@@ -39,7 +39,7 @@ export const auth = (...requiredRoles: Role[]) => {
 			throw new Error(verifiedToken.error);
 		}
 
-		const { email, name, userId, role } = verifiedToken.data as JwtPayload;
+		const { email, name, id, role } = verifiedToken.data as JwtPayload;
 
 		if (requiredRoles.length && !requiredRoles.includes(role)) {
 			throw new Error(
@@ -49,7 +49,7 @@ export const auth = (...requiredRoles: Role[]) => {
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id: userId,
+				id,
 				email,
 				role,
 			},
@@ -66,7 +66,7 @@ export const auth = (...requiredRoles: Role[]) => {
 		req.user = {
 			email,
 			name,
-			userId,
+			userId: id,
 			role,
 		};
 
