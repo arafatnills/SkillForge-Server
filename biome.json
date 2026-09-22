@@ -39,7 +39,7 @@
 		"includes": [
 			"**",
 			"!src/genrated",
-			"!src/app/templates"
+			"!src/templates"
 		]
 	},
 	"javascript": {

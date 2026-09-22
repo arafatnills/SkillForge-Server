@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SkillForge</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-wrapper {
+            width: 100%;
+            background-color: #f4f7f6;
+            padding: 40px 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4F46E5; /* Indigo-600 */
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .body-content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .body-content h2 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        .body-content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        .action-box {
+            background-color: #EEF2FF; /* Light Indigo background */
+            border-left: 4px solid #4F46E5;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 30px 0;
+        }
+        .action-box p {
+            margin: 0 0 10px 0;
+            color: #3730A3;
+            font-weight: 600;
+        }
+        .action-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #4338CA;
+        }
+        .action-box li {
+            margin-bottom: 8px;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 40px 0 20px 0;
+        }
+        .btn {
+            background-color: #4F46E5;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 35px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Welcome to SkillForge! 🚀</h1>
+                <p>Your journey to mastery starts here.</p>
+            </div>
+
+            <!-- Body -->
+            <div class="body-content">
+                <h2>Hello <%= locals.name ? name : 'there' %>,</h2>
+                
+                <p>We are absolutely thrilled to have you join the SkillForge community! Your account has been successfully created.</p>
+                
+                <p>Whether you are here to learn a new skill, level up your career, or share your knowledge, you are in the right place.</p>
+                
+                <div class="action-box">
+                    <p>Here is what you can do next:</p>
+                    <ul>
+                        <li>Complete your profile settings</li>
+                        <li>Browse our popular courses</li>
+                        <li>Connect with other learners</li>
+                    </ul>
+                </div>
+
+                <div class="btn-container">
+                    <a href="https://yourwebsite.com/dashboard" class="btn">Go to Dashboard</a>
+                </div>
+
+                <p>If you have any questions or need guidance, our support team is always ready to help you out.</p>
+                
+                <p style="margin-top: 40px; margin-bottom: 0;">
+                    Happy Learning,<br>
+                    <strong style="color: #1f2937;">The SkillForge Team</strong>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2026 SkillForge. All rights reserved.</p>
+                <p>Need help? Contact our <a href="mailto:support@skillforge.com">Support Team</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
