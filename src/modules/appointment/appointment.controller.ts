@@ -9,7 +9,7 @@ const bookAppointment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     status: status.CREATED,
-    message: "Appointment Successfully!",
+    message: "Payment URL created Successfully!",
     data: result,
   });
 });

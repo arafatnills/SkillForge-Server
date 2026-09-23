@@ -5,7 +5,6 @@ import { AppError } from "../../utils/AppError";
 
 const bookAppointmentQuery = async () => {
   // bkash payment flow
-
   const bkashIdToken = await getBkashIdToken();
   if (!bkashIdToken) {
     throw new AppError(status.NOT_FOUND, "No Bkash Access Token Found!");
@@ -18,40 +17,43 @@ const bookAppointmentQuery = async () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: bkashIdToken as string,
+        Authorization: bkashIdToken,
         "X-App-Key": config.bkash_app_key,
       },
       body: JSON.stringify({
-        agreementID: "TokenizedMerchant01L3IKB6H1565072174986",
         mode: "0011",
-        payerReference: "01723888888",
+        payerReference: "0123456789", //user email or phone number
         callbackURL: `${config.bkash_callback_url}/appointment/book-appointment/payment/callback`,
-        // merchantAssociationInfo: "MI05MID54RF09123456One",
-        amount: "300",
+        amount: "1200",
         currency: "BDT",
         intent: "sale",
-        merchantInvoiceNumber: "Inv14451sass",
+        merchantInvoiceNumber: "Inv31sd44",
       }),
     },
   );
 
   const bkashCreatePaymentResult = await bkashCreatePaymentResponse.json();
+
+  console.log({ bkashCreatePaymentResult });
+
   return bkashCreatePaymentResult;
 };
 
 // call back url
 const bookAppointmentCallbackQuery = async (query: Record<string, any>) => {
+  const paymentStatus = query.status;
   const paymentId = query.paymentID;
-  const PaymentStatus = query.status;
-  if (!PaymentStatus) {
-    throw new AppError(status.NOT_FOUND, "Payment Status is messing!");
-  }
+
   if (!paymentId) {
-    throw new AppError(status.NOT_FOUND, "Payment Id is messing!");
+    throw new AppError(status.NOT_FOUND, "Payment Id Missing");
   }
+  if (!paymentStatus) {
+    throw new AppError(status.NOT_FOUND, "Payment Status is Missing");
+  }
+
   const bkashIdToken = await getBkashIdToken();
   if (!bkashIdToken) {
-    throw new AppError(status.NOT_FOUND, "Bkash id token not found!");
+    throw new AppError(status.NOT_FOUND, "No Bkash Access Token Found!");
   }
 
   const executedPaymentResponse = await fetch(
@@ -61,18 +63,39 @@ const bookAppointmentCallbackQuery = async (query: Record<string, any>) => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: bkashIdToken as string,
+        Authorization: bkashIdToken,
         "X-App-Key": config.bkash_app_key,
       },
+
       body: JSON.stringify({
         paymentID: paymentId,
       }),
     },
   );
-
   const executedPaymentResult = await executedPaymentResponse.json();
-  console.log(executedPaymentResult)
-  return executedPaymentResult
+  if (paymentStatus === "success") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.app_url_client}/dashboard/my-appointments?status=success`,
+    };
+  }
+  if (paymentStatus === "failure") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.app_url_client}/dashboard/my-appointments?status=failure`,
+    };
+  }
+  if (paymentStatus === "cancel") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.app_url_client}/dashboard/my-appointments?status=cancel`,
+    };
+  }
+
+  return {
+    executedPaymentResult,
+    redirectUrl: `${config.app_url_client}/dashboard/my-appointments`,
+  };
 };
 
 export const AppointmentServices = {
