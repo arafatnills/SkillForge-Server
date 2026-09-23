@@ -3,7 +3,7 @@ import status from "http-status";
 import { AppError } from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { UserServices } from "./user.services";
+import { UserServices } from "./user.service";
 
 // create user
 const uploadProfileImage = catchAsync(
