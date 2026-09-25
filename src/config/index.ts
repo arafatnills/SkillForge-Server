@@ -47,4 +47,19 @@ export default {
   bkash_app_key: env.BKASH_APP_KEY!,
   bkash_app_secret: env.BKASH_APP_SECRET!,
   bkash_callback_url: env.BKASH_CALLBACK_URL!,
+
+
+  // testing email pass 
+  super_admin_name: process.env.SUPER_ADMIN_NAME!,
+	super_admin_email: process.env.SUPER_ADMIN_EMAIL!,
+	super_admin_password: process.env.SUPER_ADMIN_PASSWORD!,
+	tester_admin_name: process.env.TESTER_ADMIN_NAME!,
+	tester_admin_email: process.env.TESTER_ADMIN_EMAIL!,
+	tester_admin_password: process.env.TESTER_ADMIN_PASSWORD!,
+	tester_mentor_name: process.env.TESTER_MENTOR_NAME!,
+	tester_mentor_email: process.env.TESTER_MENTOR_EMAIL!,
+	tester_mentor_password: process.env.TESTER_MENTOR_PASSWORD!,
+
+
+
 };

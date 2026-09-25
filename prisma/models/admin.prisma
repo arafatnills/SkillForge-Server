@@ -3,8 +3,8 @@ model Admin {
   name      String
   email     String   @unique
   userId    String   @unique
-  phone     String
-  address   String
+  phone     String?
+  address   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

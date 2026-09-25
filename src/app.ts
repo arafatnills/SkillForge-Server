@@ -11,6 +11,7 @@ import { getBkashIdToken } from "./lib/bkash";
 import { globalErrorHandler } from "./middleware/globalErrorHandeler";
 import { AppointmentRoutes } from "./modules/appointment/appointment.routes";
 import { AuthRoutes } from "./modules/auth/auth.routes";
+import { MentorRoutes } from "./modules/mentor/mentor.routes";
 import { UserRoutes } from "./modules/user/user.routes";
 import sendResponse from "./utils/sendResponse";
 
@@ -53,6 +54,7 @@ app.post(
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
 app.use("/api/v1/appointment", AppointmentRoutes);
+app.use("/api/v1/mentor", MentorRoutes);
 
 // global error handler
 

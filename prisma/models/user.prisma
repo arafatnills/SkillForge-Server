@@ -1,25 +1,25 @@
 model User {
-  id            String       @id @default(uuid())
-  name          String
-  email         String       @unique
-  password      String?
-  profilePhoto  String?
+  id              String       @id @default(uuid())
+  name            String
+  email           String       @unique
+  password        String?
+  profilePhoto    String?
   profilePublicId String?
-  googleId      String?      @unique
-  provider      AuthProvider @default(CREDENTIAL)
-  emailVerified Boolean      @default(false)
-  role          Role         @default(LEARNER)
-  status        Status       @default(ACTIVE)
-  gender        Gender?
-  needsPassword Boolean      @default(false)
-  isDeleted     Boolean      @default(false)
-  deletedAt     DateTime?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  admin         Admin?
-  Learner       Learner?
-  mentor        Mentor?
-  super_admin   Super_Admin?
+  googleId        String?      @unique
+  provider        AuthProvider @default(CREDENTIAL)
+  emailVerified   Boolean      @default(false)
+  role            Role         @default(LEARNER)
+  status          Status       @default(ACTIVE)
+  gender          Gender?
+  needsPasswordChange   Boolean      @default(false)
+  isDeleted       Boolean      @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  admin           Admin?
+  Learner         Learner?
+  mentor          Mentor?
+  super_admin     Super_Admin?
 
   @@map("users")
 }

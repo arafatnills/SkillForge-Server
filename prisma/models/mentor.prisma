@@ -1,15 +1,29 @@
 model Mentor {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  userId     String   @unique
-  phone      String?
-  address    String?
-  expertise  String?
-  experience String[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String                   @id @default(uuid())
+  name               String
+  email              String                   @unique
+  phone              String?
+  address            String?
+  expertise          String?
+  experienceYears    Int
+  resume             String?
+  resumePublicId     String?
+  additionalFiles      Json?
+  isDeleted          Boolean                  @default(false)
+  deletedAt          DateTime?
+  bio                String?
+  appointmentFee     Decimal?                 @db.Decimal(10, 2)
+  verificationStatus MentorVerificationStatus @default(PENDING)
+  rejectionReason    String?
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  userId             String                   @unique
+  user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([email], name: "idx_mentor_email")
+  @@index([isDeleted], name: "idx_mentor_isDeleted")
 
   @@map("mentors")
 }
