@@ -20,6 +20,7 @@ model User {
   Learner         Learner?
   mentor          Mentor?
   super_admin     Super_Admin?
+  mentorApplication MentorApplication[]
 
   @@map("users")
 }

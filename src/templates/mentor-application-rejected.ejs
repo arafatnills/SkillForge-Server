@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update on Your Mentor Application</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-wrapper {
+            width: 100%;
+            background-color: #f4f7f6;
+            padding: 40px 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4F46E5; /* SkillForge Indigo */
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .body-content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .body-content h2 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        .body-content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #FEE2E2; /* Light Red */
+            color: #991B1B; /* Dark Red */
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .feedback-box {
+            background-color: #F9FAFB; /* Light Gray */
+            border-left: 4px solid #6B7280; /* Gray Border */
+            padding: 20px;
+            border-radius: 4px;
+            margin: 25px 0;
+            color: #374151;
+        }
+        .feedback-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .feedback-content {
+            font-style: italic;
+            margin: 0;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Application Update</h1>
+            </div>
+
+            <!-- Body -->
+            <div class="body-content">
+                <h2>Hello <%= locals.name ? name : 'Applicant' %>,</h2>
+                
+                <p>Thank you for taking the time to apply as a Mentor at SkillForge. We truly appreciate your interest in guiding our community.</p>
+                
+                <div class="status-badge">Application Not Approved</div>
+
+                <p>After carefully reviewing your profile, portfolio, and experience, our team has decided that we cannot move forward with your mentor application at this time.</p>
+                
+                <!-- Feedback/Reason Box -->
+                <div class="feedback-box">
+                    <div class="feedback-title">Feedback from our review team:</div>
+                    <p class="feedback-content">
+                        "<%= locals.reason ? reason : 'While your background is impressive, we are currently looking for mentors with more specific industry experience matching our current curriculum needs.' %>"
+                    </p>
+                </div>
+
+                <p>We know this might be disappointing news, but this is not a permanent decision. We highly encourage you to continue building your skills, updating your portfolio, and re-applying in the future.</p>
+                
+                <p>In the meantime, your account remains fully active, and you can continue to enjoy full access to SkillForge as a Learner.</p>
+                
+                <p style="margin-top: 40px; margin-bottom: 0;">
+                    Best Wishes,<br>
+                    <strong style="color: #1f2937;">The SkillForge Team</strong>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2026 SkillForge. All rights reserved.</p>
+                <p>Have questions? Contact our <a href="mailto:support@skillforge.com">Support Team</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

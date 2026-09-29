@@ -4,40 +4,72 @@ import { AppError } from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { MentorServices } from "./mentor.service";
-import { applyAsMentorValidationZodSchema } from "./mentor.validation";
+import { mentorValidation } from "./mentor.validation";
 
 // create user
 const applyAsMentor = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+	async (req: Request, res: Response, next: NextFunction) => {
+		const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    const data = JSON.parse(req.body.data);
-    const validationResult = applyAsMentorValidationZodSchema.safeParse(data);
+		const data = JSON.parse(req.body.data);
+		const validationResult =
+			mentorValidation.applyAsMentorValidationZodSchema.safeParse(data);
 
-    if (!validationResult.success) {
-      throw new AppError(status.BAD_REQUEST, validationResult.error.message);
-    }
+		if (!validationResult.success) {
+			throw new AppError(status.BAD_REQUEST, validationResult.error.message);
+		}
 
-    const payload = validationResult.data;
+		const payload = validationResult.data;
 
-    const resume = files?.resume ? files.resume[0] : null;
-    const additionalFiles = files?.additionalFiles ? files.additionalFiles : [];
+		const resume = files?.resume ? files.resume[0] : null;
+		const additionalFiles = files?.additionalFiles ? files.additionalFiles : [];
+		const user = req.user!;
 
-    console.log({ resume, additionalFiles, payload });
-    const result = await MentorServices.applyAsMentorQuery(
-      payload,
-      resume!,
-      additionalFiles,
-    );
-    sendResponse(res, {
-      success: true,
-      status: status.OK,
-      message: "Applied As Mentor successfully!",
-      data: result,
-    });
-  },
+		await MentorServices.applyAsMentorQuery(
+			payload,
+			resume!,
+			additionalFiles,
+			user,
+		);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: `Apply as Mentor Application Successfully!`,
+			data: null,
+		});
+	},
+);
+// mentor email verification
+const approvedMentor = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const payload = req.body;
+		const reviewer = req.user!;
+		const result = await MentorServices.approvedMentorQuery(payload, reviewer);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: "Mentor email verified successfully!",
+			data: result,
+		});
+	},
+);
+// mentor email verification
+const rejectMentorApplication = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const payload = req.body;
+		const reviewer = req.user!;
+		const result = await MentorServices.rejectMentorApplicationQuery(payload, reviewer);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: "Reject!",
+			data: result,
+		});
+	},
 );
 
 export const MentorControllers = {
-  applyAsMentor,
+	applyAsMentor,
+	approvedMentor,
+	rejectMentorApplication
 };

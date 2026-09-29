@@ -204,6 +204,7 @@ const verifyUserEmailQuery = async (payload: VerifyUserInterface) => {
 // login user
 const loginUserQuery = async (payload: LoginUserInterface) => {
 	const { email, password } = payload;
+	console.log({ email, password });
 
 	const user = await prisma.user.findUnique({
 		where: {

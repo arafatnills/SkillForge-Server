@@ -39,6 +39,7 @@ enum PaymentStatus {
 }
 
 enum MentorVerificationStatus {
+  OTP_PENDING
   PENDING
   APPROVED
   REJECTED

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Application Received</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-wrapper {
+            width: 100%;
+            background-color: #f4f7f6;
+            padding: 40px 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4F46E5; /* SkillForge Indigo */
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .body-content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .body-content h2 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        .body-content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        .status-box {
+            background-color: #FFFBEB; /* Light Yellow/Warning background */
+            border-left: 4px solid #F59E0B; /* Amber color */
+            padding: 20px;
+            border-radius: 4px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .status-box .badge {
+            display: inline-block;
+            background-color: #F59E0B;
+            color: #ffffff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-box p {
+            margin: 0;
+            color: #92400E;
+            font-weight: 500;
+        }
+        .dynamic-message {
+            background-color: #F3F4F6;
+            padding: 20px;
+            border-radius: 6px;
+            color: #374151;
+            font-style: italic;
+            border: 1px solid #E5E7EB;
+            margin-bottom: 30px;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Application Received 🎓</h1>
+                <p>Thank you for wanting to join our mentor team!</p>
+            </div>
+
+            <!-- Body -->
+            <div class="body-content">
+                <h2>Hello <%= locals.name ? name : 'Applicant' %>,</h2>
+                
+                <p>We have successfully received your application to become a Mentor at SkillForge. We appreciate your interest in sharing your expertise and guiding others in our community.</p>
+                
+                <!-- Status Box -->
+                <div class="status-box">
+                    <div class="badge">⏳ Pending Approval</div>
+                    <p>Your application is currently under review by our team.</p>
+                </div>
+
+                <!-- Dynamic Message Box -->
+                <div class="dynamic-message">
+                    "<%= locals.message ? message : 'Our team is carefully reviewing your profile and credentials. We will get back to you with an update soon.' %>"
+                </div>
+
+                <p>During this review period, you can continue to use your account as a Learner. We will send you another email as soon as a final decision is made.</p>
+                
+                <p style="margin-top: 40px; margin-bottom: 0;">
+                    Warm Regards,<br>
+                    <strong style="color: #1f2937;">The SkillForge Team</strong>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2026 SkillForge. All rights reserved.</p>
+                <p>Have questions? Contact our <a href="mailto:support@skillforge.com">Support Team</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

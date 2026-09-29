@@ -1,13 +1,13 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
-  type NextFunction,
-  type Request,
-  type Response,
+	type NextFunction,
+	type Request,
+	type Response,
 } from "express";
 import status from "http-status";
 import config from "./config";
-import { getBkashIdToken } from "./lib/bkash";
+import { prisma } from "./lib/prisma";
 import { globalErrorHandler } from "./middleware/globalErrorHandeler";
 import { AppointmentRoutes } from "./modules/appointment/appointment.routes";
 import { AuthRoutes } from "./modules/auth/auth.routes";
@@ -18,37 +18,43 @@ import sendResponse from "./utils/sendResponse";
 const app = express();
 
 app.use(
-  cors({
-    origin: [
-      config.app_url,
-      "http://localhost:3000",
-      "http://localhost:5173",
-    ].filter(Boolean),
-    credentials: true,
-  }),
+	cors({
+		origin: [
+			config.app_url,
+			"http://localhost:3000",
+			"http://localhost:5173",
+		].filter(Boolean),
+		credentials: true,
+	}),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // test apis
-app.post(
-  "/api/v1/grant",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const grantIdToken = await getBkashIdToken();
+app.get(
+	"/api/v1/users/test",
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const user = await prisma.user.findMany({
+				where: {
+					role: 'LEARNER'
+				}
+			})
 
-      sendResponse(res, {
-        success: true,
-        status: status.OK,
-        message: "Welcome to backend server!",
-        data: grantIdToken,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
+			sendResponse(res, {
+				success: true,
+				status: status.OK,
+				message: "Welcome to backend server!",
+				data: user,
+			});
+		} catch (error) {
+			next(error);
+		}
+	},
 );
+
+
 
 // all APIs routes
 app.use("/api/v1/auth", AuthRoutes);
