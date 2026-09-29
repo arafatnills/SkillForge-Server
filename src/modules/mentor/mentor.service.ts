@@ -15,15 +15,13 @@ import type { RequestUser } from "../../middleware/checkAuth";
 import { AppError } from "../../utils/AppError";
 import { deleteCloudinaryFile } from "../../utils/deleteCloudinaryFile";
 import type {
-	approvedMentorEmailInterface,
-	MentorApplicationInterface,
-	RejectApplicationInterface,
-	VerifyMentorOtpInterface,
+  approvedMentorEmailInterface,
+  MentorApplicationInterface,
+  RejectApplicationInterface,
+  VerifyMentorOtpInterface,
 } from "./mentor.interface";
 
-/* -------------------------------------------------------------------------- */
-/*                                   Helpers                                  */
-/* -------------------------------------------------------------------------- */
+
 
 const OTP_TTL_SECONDS = 60 * 60; // 1 hour
 const MAX_OTP_ATTEMPTS = 5;
@@ -77,10 +75,8 @@ const sendMentorOtp = async (name: string, email: string) => {
 	});
 };
 
-/* -------------------------------------------------------------------------- */
-/*                              1. Apply as mentor                            */
-/* -------------------------------------------------------------------------- */
 
+// apply as mentor
 const applyAsMentorQuery = async (
 	payload: MentorApplicationInterface,
 	resume: Express.Multer.File,
@@ -174,10 +170,7 @@ const applyAsMentorQuery = async (
 	};
 };
 
-/* -------------------------------------------------------------------------- */
-/*                               2. Verify OTP                                */
-/* -------------------------------------------------------------------------- */
-
+// verify otp
 const verifyMentorOtpQuery = async (
 	payload: VerifyMentorOtpInterface,
 	user: RequestUser,
@@ -246,10 +239,7 @@ const verifyMentorOtpQuery = async (
 	return updatedMentor;
 };
 
-/* -------------------------------------------------------------------------- */
-/*                               3. Resend OTP                                */
-/* -------------------------------------------------------------------------- */
-
+// resent otp
 const resendMentorOtpQuery = async (user: RequestUser) => {
 	const mentor = await prisma.mentor.findUnique({
 		where: { email: user.email },
@@ -271,10 +261,7 @@ const resendMentorOtpQuery = async (user: RequestUser) => {
 	return { message: "A new OTP has been sent to your email." };
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                 4. Approve                                 */
-/* -------------------------------------------------------------------------- */
-
+// approved mentor application only for admin and super admin
 const approvedMentorQuery = async (
 	payload: approvedMentorEmailInterface,
 	reviewer: RequestUser,
@@ -337,11 +324,7 @@ const approvedMentorQuery = async (
 	return trxResult;
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                  5. Reject                                 */
-/* -------------------------------------------------------------------------- */
-
-// NOTE: payload.applicationId ekhon Mentor.id (MentorApplication model nai)
+// rejected mentor application
 const rejectMentorApplicationQuery = async (
 	payload: RejectApplicationInterface,
 	reviewer: RequestUser,
@@ -379,9 +362,6 @@ const rejectMentorApplicationQuery = async (
 		);
 	}
 
-	// rejected hole record delete hoye jabe -> user abar apply korte parbe
-	// (jodi rejected record rekhe dite chao, delete er jaygay update kore
-	// verificationStatus: "REJECTED" + rejectionReason set koro)
 	await prisma.mentor.delete({ where: { id: mentor.id } });
 
 	const html = await renderTemplate("mentor-application-rejected.ejs", {
@@ -405,10 +385,8 @@ const rejectMentorApplicationQuery = async (
 	};
 };
 
-/* -------------------------------------------------------------------------- */
-/*                               6. Get all mentors                           */
-/* -------------------------------------------------------------------------- */
 
+// get all mentors only for admin and super admin
 const getAllMentorsQuery = async (query: IQueryInterface) => {
 	const limit = query.limit ? Number(query.limit) : 10;
 	const page = query.page ? Number(query.page) : 1;
@@ -446,7 +424,7 @@ const getAllMentorsQuery = async (query: IQueryInterface) => {
 		});
 	}
 
-	// shudhu approved mentor gula dekhabe
+	
 	andConditions.push({ isDeleted: false, verificationStatus: "APPROVED" });
 
 	const mentors = await prisma.mentor.findMany({

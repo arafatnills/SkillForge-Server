@@ -1,5 +1,6 @@
 import app from "./app";
 import config from "./config";
+import { deleteUnVerifiedMentors } from "./lib/corn";
 import { transporter } from "./lib/nodemailer";
 import { prisma } from "./lib/prisma";
 import { redisClient } from "./lib/redis";
@@ -22,7 +23,7 @@ async function main() {
 		seedTesterSuperAdmin();
 		seedTesterAdmin();
 		seedTesterMentor();
-
+		await deleteUnVerifiedMentors()
 		app.listen(port, () => {
 			console.log(`Server is running on port : ${port}`);
 		});

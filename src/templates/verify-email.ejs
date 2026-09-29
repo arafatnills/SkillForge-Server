@@ -104,7 +104,7 @@
             <p>Enter this code in the verification screen on our website/app.</p>
 
             <div class="warning-text">
-                <p><strong>Note:</strong> This OTP is valid for <strong>5 minutes</strong>. Do not share this code with anyone.</p>
+                <p><strong>Note:</strong> This OTP is valid for <strong><%= locals.expiresIn ? expiresIn : '5 minutes' %></strong>. Do not share this code with anyone.</p>
                 <p>If you did not attempt to create an account, you can safely ignore this email.</p>
             </div>
             
