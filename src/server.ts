@@ -22,6 +22,7 @@ async function main() {
 		seedTesterSuperAdmin();
 		seedTesterAdmin();
 		seedTesterMentor();
+
 		app.listen(port, () => {
 			console.log(`Server is running on port : ${port}`);
 		});

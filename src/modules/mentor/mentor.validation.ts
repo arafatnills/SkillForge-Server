@@ -16,7 +16,20 @@ const approvedMentorEmailValidationZodSchema = z.object({
 	email: z.email("Invalid email address"),
 });
 
+const rejectMentorApplicationValidationZodSchema = z.object({
+	applicationId: z.string("Invalid application ID"),
+	rejectionReason: z
+		.string()
+		.max(255, "Rejection reason must be less than 255 characters"),
+});
+
+const verifyMentorApplicationOtpZodSchema = z.object({
+	otp: z.string("Invalid OTP").length(6),
+});
+
 export const mentorValidation = {
 	applyAsMentorValidationZodSchema,
 	approvedMentorEmailValidationZodSchema,
+	rejectMentorApplicationValidationZodSchema,
+	verifyMentorApplicationOtpZodSchema,
 };

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Approved! Welcome to the Team</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-wrapper {
+            width: 100%;
+            background-color: #f4f7f6;
+            padding: 40px 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4F46E5; /* SkillForge Indigo */
+            padding: 40px 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .body-content {
+            padding: 40px 30px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .body-content h2 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        .body-content p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #D1FAE5; /* Light Green */
+            color: #065F46; /* Dark Green */
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .dynamic-message {
+            background-color: #F8FAFC; /* Very Light Blue/Gray */
+            border-left: 4px solid #10B981; /* Success Green border */
+            padding: 20px;
+            border-radius: 4px;
+            margin: 25px 0;
+            color: #334155;
+            font-style: italic;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 35px 0 20px 0;
+        }
+        .btn {
+            background-color: #10B981; /* Success Green */
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 35px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-wrapper">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header">
+                <h1>Congratulations! 🎉</h1>
+                <p>Welcome to the SkillForge Mentor Team</p>
+            </div>
+
+            <!-- Body -->
+            <div class="body-content">
+                <h2>Hello <%= locals.name ? name : 'Mentor' %>,</h2>
+                
+                <div class="status-badge">Application Approved</div>
+
+                <p>We are thrilled to inform you that your mentor application has been officially approved! Our review team was highly impressed by your portfolio, experience, and passion for helping others grow.</p>
+                
+                <!-- Dynamic Message Box -->
+                <div class="dynamic-message">
+                    "<%= locals.message ? message : 'Your account role has now been successfully upgraded. You can now access exclusive mentor features on the platform.' %>"
+                </div>
+
+                <p>To get started, simply log in to your account, set up your Mentor Profile, add your availability, and start connecting with eager learners.</p>
+
+                <div class="btn-container">
+                    <a href="https://yourwebsite.com/login" class="btn">Log in to Dashboard</a>
+                </div>
+
+                <p>We are excited to see the impact you will make in the SkillForge community. If you need any help navigating your new dashboard, we are just an email away.</p>
+                
+                <p style="margin-top: 40px; margin-bottom: 0;">
+                    Welcome aboard,<br>
+                    <strong style="color: #1f2937;">The SkillForge Team</strong>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2026 SkillForge. All rights reserved.</p>
+                <p>Have questions? Contact our <a href="mailto:support@skillforge.com">Support Team</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

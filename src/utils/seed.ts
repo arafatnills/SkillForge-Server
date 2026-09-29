@@ -158,7 +158,7 @@ export const seedTesterMentor = async () => {
 						name,
 						email,
 						experienceYears: 5,
-						verificationStatus: "APPROVED"
+						verificationStatus: "APPROVED",
 					},
 				},
 			},

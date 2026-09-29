@@ -10,3 +10,12 @@ export interface MentorApplicationInterface {
 export interface approvedMentorEmailInterface {
 	readonly email: string;
 }
+
+export interface RejectApplicationInterface {
+	applicationId: string;
+	rejectionReason: string;
+}
+
+export interface VerifyMentorOtpInterface {
+	otp: string;
+}

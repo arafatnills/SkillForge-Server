@@ -6,7 +6,7 @@ import sendResponse from "../../utils/sendResponse";
 import { MentorServices } from "./mentor.service";
 import { mentorValidation } from "./mentor.validation";
 
-// create user
+// apply as mentor
 const applyAsMentor = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -39,7 +39,7 @@ const applyAsMentor = catchAsync(
 		});
 	},
 );
-// mentor email verification
+// approve mentor application
 const approvedMentor = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const payload = req.body;
@@ -53,16 +53,62 @@ const approvedMentor = catchAsync(
 		});
 	},
 );
-// mentor email verification
+// reject mentor application
 const rejectMentorApplication = catchAsync(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const payload = req.body;
 		const reviewer = req.user!;
-		const result = await MentorServices.rejectMentorApplicationQuery(payload, reviewer);
+		const result = await MentorServices.rejectMentorApplicationQuery(
+			payload,
+			reviewer,
+		);
 		sendResponse(res, {
 			success: true,
 			status: status.OK,
-			message: "Reject!",
+			message: "Mentor application rejected successfully!",
+			data: result,
+		});
+	},
+);
+
+// get all mentors
+const getAllMentors = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const { data, meta } = await MentorServices.getAllMentorsQuery(req.query);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: "All mentors retrieved successfully!",
+			data: data,
+			meta: meta,
+			total: meta.total,
+		});
+	},
+);
+
+// verify OTP
+const verifyMentorOtp = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const otp = req.body;
+		const user = req.user!;
+		const result = await MentorServices.verifyMentorOtpQuery(otp, user);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: "OTP Verify Successfully!",
+			data: result,
+		});
+	},
+);
+// resent OTP
+const resendMentorOtp = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const user = req.user!;
+		const result = await MentorServices.resendMentorOtpQuery(user);
+		sendResponse(res, {
+			success: true,
+			status: status.OK,
+			message: "OTP resent Successfully!",
 			data: result,
 		});
 	},
@@ -71,5 +117,8 @@ const rejectMentorApplication = catchAsync(
 export const MentorControllers = {
 	applyAsMentor,
 	approvedMentor,
-	rejectMentorApplication
+	rejectMentorApplication,
+	getAllMentors,
+	verifyMentorOtp,
+	resendMentorOtp,
 };
