@@ -12,6 +12,7 @@ import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
 import { redisClient } from "../../lib/redis";
 import { AppError } from "../../utils/AppError";
+import { hashOtp } from "../../utils/hashOtp";
 import { jwtUtils } from "../../utils/jwt";
 import type {
 	CreateUserInterface,
@@ -45,7 +46,7 @@ const createUserQuery = async (payload: CreateUserInterface) => {
 	const userOtpKey = `user-registration-otp:${email}`;
 	const otpValue = crypto.randomInt(100000, 1000000).toString();
 
-	await redisClient.set(userOtpKey, otpValue, {
+	await redisClient.set(userOtpKey, hashOtp(otpValue), {
 		expiration: {
 			type: "EX",
 			value: 5 * 60,

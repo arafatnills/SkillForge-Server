@@ -1,5 +1,5 @@
 import type { UploadApiResponse } from "cloudinary";
-import crypto, { createHash } from "crypto";
+import crypto from "crypto";
 import ejs from "ejs";
 import status from "http-status";
 import path from "path";
@@ -14,11 +14,12 @@ import { redisClient } from "../../lib/redis";
 import type { RequestUser } from "../../middleware/checkAuth";
 import { AppError } from "../../utils/AppError";
 import { deleteCloudinaryFile } from "../../utils/deleteCloudinaryFile";
+import { hashOtp } from "../../utils/hashOtp";
 import type {
-  approvedMentorEmailInterface,
-  MentorApplicationInterface,
-  RejectApplicationInterface,
-  VerifyMentorOtpInterface,
+	approvedMentorEmailInterface,
+	MentorApplicationInterface,
+	RejectApplicationInterface,
+	VerifyMentorOtpInterface,
 } from "./mentor.interface";
 
 
@@ -29,7 +30,7 @@ const MAX_OTP_ATTEMPTS = 5;
 const otpKey = (email: string) => `mentor-otp:${email}`;
 const otpAttemptsKey = (email: string) => `mentor-otp-attempts:${email}`;
 
-const hashOtp = (otp: string) => createHash("sha256").update(otp).digest("hex");
+
 
 const generateOtp = () => crypto.randomInt(100000, 1000000).toString();
 
