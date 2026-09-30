@@ -8,7 +8,7 @@ model Mentor {
   experienceYears    Int
   resume             String?
   resumePublicId     String?
-  additionalFiles      Json?
+  additionalFiles    Json?
   isDeleted          Boolean                  @default(false)
   deletedAt          DateTime?
   bio                String?
@@ -21,9 +21,10 @@ model Mentor {
   updatedAt          DateTime                 @updatedAt
   userId             String                   @unique
   user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules          Schedule[]
+  appointments       Appointment[]
 
   @@index([email], name: "idx_mentor_email")
   @@index([isDeleted], name: "idx_mentor_isDeleted")
-
   @@map("mentors")
 }
