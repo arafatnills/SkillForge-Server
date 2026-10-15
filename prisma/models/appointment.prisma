@@ -3,8 +3,8 @@ model Appointment {
 
   status AppointmentStatus @default(PENDING)
 
-  joiningTime  DateTime
-  serialNumber Int
+  joiningTime  DateTime?
+  serialNumber Int?
 
   previousHomeWorkUrl      String?
   previousHomeWorkPublicId String?
