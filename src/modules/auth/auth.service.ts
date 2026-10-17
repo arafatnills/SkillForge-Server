@@ -92,7 +92,6 @@ const createUserQuery = async (payload: CreateUserInterface) => {
 
 // verify user email
 const verifyUserEmailQuery = async (payload: VerifyUserInterface) => {
-	const { otp } = payload;
 	const email = payload.email.trim().toLowerCase();
 
 	const isExistsUser = await prisma.user.findUnique({
@@ -118,7 +117,8 @@ const verifyUserEmailQuery = async (payload: VerifyUserInterface) => {
 	const redisOtp = await redisClient.get(userOtpKey);
 
 	if (!redisOtp) throw new AppError(status.UNAUTHORIZED, "Invalid OPT");
-	if (redisOtp !== otp)
+	
+	if (redisOtp !== hashOtp(String(payload.otp).trim()))
 		throw new AppError(status.UNAUTHORIZED, "OTP does not match!.");
 
 	await redisClient.del(userOtpKey);

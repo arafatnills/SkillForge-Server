@@ -1,19 +1,122 @@
+import { addMinutes, isBefore, isSameDay } from "date-fns";
 import status from "http-status";
 import config from "../../config";
 import { AppointmentStatus, PaymentStatus } from "../../generated/prisma/enums";
 import { getBkashIdToken } from "../../lib/bkash";
+import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import { AppError } from "../../utils/AppError";
+import { generateInvoicePdf } from "../../utils/generateInvoicePdf";
+import type {
+  bookingAppointmentPayload,
+  payAppointmentPayload,
+} from "./appointment.interface";
 
-const bookAppointmentQuery = async (payload: any, user: RequestUser) => {
+
+const bookAppointmentQuery = async (
+  payload: bookingAppointmentPayload,
+  user: RequestUser,
+) => {
   // bkash payment flow
   const transactionResult = await prisma.$transaction(async (tx) => {
+    const learner = await tx.learner.findUnique({
+      where: {
+        userId: user.userId,
+      },
+    });
+
+    if (!learner) {
+      throw new AppError(status.NOT_FOUND, "Learner Not Found!");
+    }
+
+    const schedule = await prisma.schedule.findUnique({
+      where: {
+        id: payload.scheduleId,
+      },
+      include: {
+        mentor: true,
+      },
+    });
+
+    if (!schedule || schedule.isDeleted) {
+      throw new AppError(status.NOT_FOUND, "Schedule Not Found!");
+    }
+    if (schedule.status === "DRAFT") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "This Schedule Is Not Publish Yet!",
+      );
+    }
+
+    const now = new Date();
+
+    if (!isSameDay(now, schedule.startDateTime)) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "This Schedule Is Not Available Today!",
+      );
+    }
+
+    if (!isBefore(now, schedule.startDateTime)) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "This Schedule Has Already Started!",
+      );
+    }
+
+    const existingAppointment = await tx.appointment.findFirst({
+      where: {
+        learnerId: learner.id,
+        scheduleId: schedule.id,
+      },
+    });
+
+    if (existingAppointment?.status === "PENDING") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "You Already Have A Pending Appointment. Place Pay For That!",
+      );
+    }
+    if (existingAppointment?.status === "CONFIRMED") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "You Already Have A Confirmed Appointment!",
+      );
+    }
+
+    if (existingAppointment?.status === "ONGOING") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "You Already Have A Ongoing Appointment!",
+      );
+    }
+
+    if (existingAppointment?.status === "COMPLETED") {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "You Already Have Completed An Appointment On This Schedule, Place Try Again Another Day!",
+      );
+    }
+
+    if (schedule.availableSlots === 0) {
+      throw new AppError(status.BAD_REQUEST, "This Schedule Is Fully Booked!");
+    }
+
+    if (!schedule.mentor.appointmentFee) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        "Mentor Has Not Set A Appointment Fee Yet!",
+      );
+    }
+
+    const amount = schedule.mentor.appointmentFee.toString();
+
     const appointment = await tx.appointment.create({
       data: {
-        learnerId: user.userId,
-        mentorId: '',
-        scheduleId: ''
+        learnerId: learner.id,
+        mentorId: schedule.mentorId,
+        scheduleId: payload.scheduleId,
       },
     });
 
@@ -37,7 +140,7 @@ const bookAppointmentQuery = async (payload: any, user: RequestUser) => {
           // payerReference: "0123456789", //user email or phone number
           payerReference: user.email,
           callbackURL: `${config.bkash_callback_url}/appointment/book-appointment/payment/callback`,
-          amount: "1200",
+          amount: amount,
           currency: "BDT",
           intent: "sale",
           // merchantInvoiceNumber: "Inv31sd44",
@@ -71,13 +174,28 @@ const bookAppointmentQuery = async (payload: any, user: RequestUser) => {
 };
 
 // failed payment again payment
-const payAppointmentQuery = async (payload: any, user: RequestUser) => {
+const payAppointmentQuery = async (
+  payload: payAppointmentPayload,
+  user: RequestUser,
+) => {
   const { appointmentId } = payload;
   const existingAppointment = await prisma.appointment.findUnique({
     where: {
       id: appointmentId,
     },
+    include: {
+      schedule: {
+        include: {
+          mentor: {
+            select: {
+              appointmentFee: true,
+            },
+          },
+        },
+      },
+    },
   });
+
   if (!existingAppointment) {
     throw new AppError(status.NOT_FOUND, "Appointment dose not exists!");
   }
@@ -89,6 +207,14 @@ const payAppointmentQuery = async (payload: any, user: RequestUser) => {
   if (!bkashIdToken) {
     throw new AppError(status.NOT_FOUND, "No Bkash Access Token Found!");
   }
+
+  if (!existingAppointment.schedule.mentor.appointmentFee) {
+    throw new AppError(
+      status.BAD_REQUEST,
+      "Mentor Has Not Set A Appointment Fee Yet!",
+    );
+  }
+  const amount = existingAppointment.schedule.mentor.appointmentFee.toString();
 
   const bkashCreatePaymentResponse = await fetch(
     `${config.bkash_base_url}/tokenized/checkout/create`,
@@ -105,7 +231,7 @@ const payAppointmentQuery = async (payload: any, user: RequestUser) => {
         // payerReference: "0123456789", //user email or phone number
         payerReference: user.email,
         callbackURL: `${config.bkash_callback_url}/appointment/book-appointment/payment/callback`,
-        amount: "1200",
+        amount: amount,
         currency: "BDT",
         intent: "sale",
         // merchantInvoiceNumber: "Inv31sd44",
@@ -167,12 +293,49 @@ const bookAppointmentCallbackQuery = async (query: Record<string, any>) => {
     );
     const executedPaymentResult = await executedPaymentResponse.json();
     if (paymentStatus === "success") {
+      const appointment = await tx.appointment.findUnique({
+        where: {
+          id: executedPaymentResult.merchantInvoiceNumber,
+        },
+        include: {
+          schedule: true,
+          learner: true,
+          mentor: true
+        },
+      });
+
+      if (!appointment) {
+        throw new AppError(status.NOT_FOUND, "Appointment Not Found!");
+      }
+
+      const newAvailableSlots = appointment.schedule.availableSlots - 1;
+      const alreadyBookedSlots =
+        appointment.schedule.totalSlots - appointment.schedule.availableSlots;
+
+      const serialNumber = alreadyBookedSlots + 1;
+
+      const joiningTime = addMinutes(
+        appointment.schedule.startDateTime,
+        (serialNumber - 1) * 20,
+      );
+
       await tx.appointment.update({
         where: {
           id: executedPaymentResult.merchantInvoiceNumber,
         },
         data: {
           status: AppointmentStatus.CONFIRMED,
+          joiningTime: joiningTime,
+          serialNumber: serialNumber,
+        },
+      });
+
+      await tx.schedule.update({
+        where: {
+          id: appointment.schedule.id,
+        },
+        data: {
+          availableSlots: newAvailableSlots,
         },
       });
 
@@ -188,6 +351,52 @@ const bookAppointmentCallbackQuery = async (query: Record<string, any>) => {
           gatewayResponse: executedPaymentResult,
         },
       });
+
+// ----------------------debug--------------------------------------
+      console.log("Invoice date debug:", {
+        joiningTime,
+        scheduleDate: appointment.schedule.startDateTime,
+        paymentExecuteTime: executedPaymentResult.paymentExecuteTime,
+        paidAt: new Date(executedPaymentResult.paymentExecuteTime),
+      });
+
+      const invoicePdf = await generateInvoicePdf({
+        invoiceId: `INV-${appointment.id}`,
+        learnerName: appointment.learner.name,
+        learnerEmail: appointment.learner.email,
+        mentorName: appointment.mentor.name,
+        mentorExpertise: appointment.mentor.expertise,
+        appointmentId: appointment.id,
+        serialNumber,
+        joiningTime,
+        scheduleDate: appointment.schedule.startDateTime,
+        meetingLink: appointment.schedule.meetingLink,
+        amount: Number(executedPaymentResult.amount),
+        transactionId: executedPaymentResult.trxID,
+        paidAt: new Date(executedPaymentResult.paymentExecuteTime),
+      });
+
+      await transporter.sendMail({
+        from: config.smtp_sender,
+        to: appointment.learner.email,
+        subject: "Your Appointment Invoice - SkillForge",
+        text: [
+          `Hello ${appointment.learner.name},`,
+          "",
+          "Your appointment payment was successful.",
+          "Please find your invoice attached.",
+          "",
+          "Thank you for choosing SkillForge!",
+        ].join("\n"),
+        attachments: [
+          {
+            filename: `invoice-${appointment.id}.pdf`,
+            content: invoicePdf,
+            contentType: "application/pdf",
+          },
+        ],
+      });
+
       return {
         redirectUrl: `${config.app_url_client}/dashboard/my-appointments?status=success`,
       };

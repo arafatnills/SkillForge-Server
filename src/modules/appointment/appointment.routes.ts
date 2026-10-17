@@ -7,7 +7,7 @@ const router = Router();
 
 router.post(
 	"/book-appointment",
-	auth(Role.LEARNER),
+	auth(Role.LEARNER, Role.MENTOR),
 	AppointmentControllers.bookAppointment,
 );
 router.post(
