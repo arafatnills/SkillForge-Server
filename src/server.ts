@@ -1,37 +1,42 @@
 import app from "./app";
-import config from "./config";
-import { deleteUnVerifiedMentors } from "./lib/corn";
-import { transporter } from "./lib/nodemailer";
-import { prisma } from "./lib/prisma";
-import { redisClient } from "./lib/redis";
+import config from "./app/config";
+import { deleteUnverifiedDoctors } from "./app/lib/cron";
+import { transporter } from "./app/lib/nodemailer";
+import { prisma } from "./app/lib/prisma";
+import { redisClient } from "./app/lib/redis";
 import {
+	seedSuperAdmin,
 	seedTesterAdmin,
-	seedTesterMentor,
-	seedTesterSuperAdmin,
-} from "./utils/seed";
+	seedTesterDoctor,
+} from "./app/utils/seed";
 
-const port = config.port;
+const PORT = config.port;
 
-async function main() {
+const main = async () => {
 	try {
 		await prisma.$connect();
 		console.log("Connected to the database successfully.");
+
 		await redisClient.connect();
-		console.log("Connected to redis successfully.");
+		console.log("Redis Connected Successfully.");
+
 		await transporter.verify();
-		console.log("Connected to nodemailer successfully.");
-		seedTesterSuperAdmin();
-		seedTesterAdmin();
-		seedTesterMentor();
-		await deleteUnVerifiedMentors()
-		app.listen(port, () => {
-			console.log(`Server is running on port : ${port}`);
+		console.log("Nodemailer Connected Successfully.");
+
+		await seedSuperAdmin();
+		await seedTesterAdmin();
+		await seedTesterDoctor();
+
+		await deleteUnverifiedDoctors();
+
+		app.listen(PORT, () => {
+			console.log(`Server is running on port ${PORT}`);
 		});
 	} catch (error) {
 		console.error("Error starting the server:", error);
-		await prisma.$disconnect(); // Ensure the database connection is closed
-		process.exit(1); // Exit the process with an error code
+		await prisma.$disconnect();
+		process.exit(1);
 	}
-}
+};
 
 main();

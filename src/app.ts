@@ -1,68 +1,76 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
+	type Application,
 	type NextFunction,
 	type Request,
 	type Response,
 } from "express";
-import status from "http-status";
-import config from "./config";
-import { prisma } from "./lib/prisma";
-import { globalErrorHandler } from "./middleware/globalErrorHandeler";
-import { AppointmentRoutes } from "./modules/appointment/appointment.routes";
-import { AuthRoutes } from "./modules/auth/auth.routes";
-import { MentorRoutes } from "./modules/mentor/mentor.routes";
-import { ScheduleRoutes } from "./modules/schedule/schedule.routes";
-import { UserRoutes } from "./modules/user/user.routes";
-import sendResponse from "./utils/sendResponse";
+import httpStatus from "http-status";
+import config from "./app/config";
+import { getBkashIdToken } from "./app/lib/bkash";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import { notFound } from "./app/middleware/notFound";
+import { AnalyticsRoutes } from "./app/module/analytics/analytics.route";
+import { AppointementRoutes } from "./app/module/appointment/appointment.route";
+import { AuthRoutes } from "./app/module/auth/auth.route";
+import { DoctorRoutes } from "./app/module/doctor/doctor.route";
+import { PaymentRoutes } from "./app/module/payment/payment.route";
+import { PrescriptionRoutes } from "./app/module/prescription/prescription.route";
+import { ScheduleRoutes } from "./app/module/schedule/schedule.route";
+import { UserRoutes } from "./app/module/user/user.route";
 
-const app = express();
+const app: Application = express();
 
 app.use(
 	cors({
-		origin: [
-			config.app_url,
-			"http://localhost:3000",
-			"http://localhost:5173",
-		].filter(Boolean),
+		origin: config.frontend_url,
 		credentials: true,
 	}),
 );
-app.use(express.json());
+
+// Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware to parse JSON bodies
+app.use(express.json());
 app.use(cookieParser());
 
-// test apis
-app.get(
-	"/api/v1/users/test",
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const user = await prisma.user.findMany({
-				where: {
-					role: "LEARNER",
-				},
-			});
-
-			sendResponse(res, {
-				success: true,
-				status: status.OK,
-				message: "Welcome to backend server!",
-				data: user,
-			});
-		} catch (error) {
-			next(error);
-		}
-	},
-);
-
-// all APIs routes
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
-app.use("/api/v1/appointment", AppointmentRoutes);
-app.use("/api/v1/mentor", MentorRoutes);
+app.use("/api/v1/appointment", AppointementRoutes);
+app.use("/api/v1/doctor", DoctorRoutes);
 app.use("/api/v1/schedule", ScheduleRoutes);
+app.use("/api/v1/payment", PaymentRoutes);
+app.use("/api/v1/prescription", PrescriptionRoutes);
+app.use("/api/v1/analytics", AnalyticsRoutes);
 
-// global error handler
+app.get("/test", async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const grantIdTokenResult = await getBkashIdToken();
+
+		console.log(grantIdTokenResult);
+
+		res.status(httpStatus.OK).json({
+			success: true,
+			message: "Welcome to PH Healthcare System Backend",
+			data: null,
+		});
+	} catch (error) {
+		console.log(error);
+		next(error);
+	}
+});
+
+// Basic route
+app.get("/", async (req: Request, res: Response) => {
+	res.status(httpStatus.OK).json({
+		success: true,
+		message: "Welcome to PH Healthcare System Backend",
+	});
+});
+
 app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;
