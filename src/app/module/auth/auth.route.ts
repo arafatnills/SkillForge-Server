@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Role } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
+import { loginRateLimit } from "../../ratelimit/rateLimit";
 import { AuthController } from "./auth.controller";
 import { UserValidation } from "./auth.validation";
 
@@ -43,6 +44,7 @@ router.post(
 );
 router.post(
   "/login",
+  loginRateLimit,
   validateRequest(UserValidation.LoginZodSchema),
   AuthController.loginUser,
 );

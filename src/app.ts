@@ -21,7 +21,7 @@ import { ScheduleRoutes } from "./app/module/schedule/schedule.route";
 import { UserRoutes } from "./app/module/user/user.route";
 
 const app: Application = express();
-
+app.set("trust proxy", 1);
 app.use(
 	cors({
 		origin: config.frontend_url,
